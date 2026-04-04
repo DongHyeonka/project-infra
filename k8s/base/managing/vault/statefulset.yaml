@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault
+  namespace: mnt
+  labels:
+    app: vault
+spec:
+  serviceName: vault
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      serviceAccountName: vault
+      containers:
+        - name: vault
+          image: hashicorp/vault:1.15
+          ports:
+            - containerPort: 8200
+              name: api
+            - containerPort: 8201
+              name: cluster
+          env:
+            - name: VAULT_ADDR
+              value: "http://127.0.0.1:8200"
+          envFrom:
+            - configMapRef:
+                name: vault-config
+          volumeMounts:
+            - name: vault-data
+              mountPath: /vault/data
+  volumeClaimTemplates:
+    - metadata:
+        name: vault-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
