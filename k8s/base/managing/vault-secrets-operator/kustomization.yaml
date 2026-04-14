@@ -5,3 +5,5 @@ resources:
   - serviceaccount.yaml
   - vault-connection.yaml
   - vault-auth.yaml
+  - vault-static-secret-htpasswd.yaml
+  - vault-static-secret-pull-cred.yaml

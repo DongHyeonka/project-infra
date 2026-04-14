@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - serviceaccount.yaml
+  - clusterrolebinding.yaml
   - statefulset.yaml
   - service.yaml
   - service-ui.yaml

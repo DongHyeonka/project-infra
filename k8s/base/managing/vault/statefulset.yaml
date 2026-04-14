@@ -20,6 +20,7 @@ spec:
       containers:
         - name: vault
           image: hashicorp/vault:1.15
+          command: ["vault", "server", "-config=/vault/config/vault-config.hcl"]
           ports:
             - containerPort: 8200
               name: api
@@ -28,12 +29,20 @@ spec:
           env:
             - name: VAULT_ADDR
               value: "http://127.0.0.1:8200"
-          envFrom:
-            - configMapRef:
-                name: vault-config
+          securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
           volumeMounts:
             - name: vault-data
               mountPath: /vault/data
+            - name: vault-config
+              mountPath: /vault/config
+              readOnly: true
+      volumes:
+        - name: vault-config
+          configMap:
+            name: vault-config
   volumeClaimTemplates:
     - metadata:
         name: vault-data
